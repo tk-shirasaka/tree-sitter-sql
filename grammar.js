@@ -22,7 +22,7 @@ module.exports = grammar({
       optional(
         seq(
           keyword('TOP'),
-          $._number,
+          $.number,
         ),
       ),
       $.select_fields,
@@ -165,7 +165,7 @@ module.exports = grammar({
         seq(
           keyword('IS'),
           optional(keyword('NOT')),
-          $._null,
+          $.null,
         ),
         seq(
           keyword('BETWEEN'),
@@ -178,7 +178,7 @@ module.exports = grammar({
 
     limit_clause: $ => seq(
       keyword('LIMIT'),
-      $._number,
+      $.number,
     ),
 
     field_expression: $ => seq(
@@ -210,19 +210,19 @@ module.exports = grammar({
 
     _value: $ => choice(
       $._identifier,
-      $._number,
-      $._string,
-      $._boolean,
+      $.number,
+      $.string,
+      $.boolean,
     ),
 
     _identifier: () => /[a-zA-Z][a-zA-Z0-9_]*/,
-    _number: () =>  /[1-9][0-9]*/,
-    _string: () =>  /'[^']*'/,
-    _boolean: () =>  choice(
+    number: () =>  /[1-9][0-9]*/,
+    string: () =>  /'[^']*'/,
+    boolean: () =>  choice(
       keyword('TRUE'),
       keyword('FALSE'),
     ),
-    _null: () =>  keyword('NULL'),
+    null: () =>  keyword('NULL'),
   },
 });
 
