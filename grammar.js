@@ -2,14 +2,8 @@ module.exports = grammar({
   name: 'sql',
 
   rules: {
-    source_file: $ => seq(
+    source_file: $ => repeat(
       $._definition,
-      optional(
-        seq(
-          ';',
-          optional($._definition),
-        )
-      )
     ),
 
     _definition: $ => choice(
@@ -18,77 +12,62 @@ module.exports = grammar({
     ),
 
     select_statement: $ => seq(
-      keyword('SELECT'),
-      optional(
-        seq(
-          keyword('TOP'),
-          $.number,
-        ),
-      ),
-      $.select_fields,
+      $.select_clause,
       optional($.from_clause),
       optional($.where_clause),
       optional($.limit_clause),
+      optional(';'),
     ),
 
-    select_fields: $ => seq(
-      $._select_field,
+    select_clause: $ => seq(
+      keyword('SELECT'),
       optional(
-        seq(
-          ',',
-          $.select_fields,
-        ),
+        seq(keyword('TOP'), $.number),
       ),
+      field('fields', $._select_fields),
     ),
 
-    _select_field: $ => choice(
-      '*',
-      $.symbole_definition,
+    _select_fields: $ => repeat_comma(
+      choice(
+        '*',
+        $.symbole_definition,
+      ),
     ),
 
     from_clause: $ => seq(
       keyword('FROM'),
       choice(
-        $.symbole_definition,
-        seq(
-          '(',
-          $.select_statement,
-          ')',
-          $._aliase,
-        ),
+        field('table', $.symbole_definition),
+        seq('(', $.select_statement, ')', $._aliase),
       ),
       optional($.join_clause),
     ),
 
     update_statement: $ => seq(
-      keyword('UPDATE'),
-      $.symbole_definition,
+      $.update_clause,
       optional($.join_clause),
-      keyword('SET'),
-      $.update_fields,
+      $.set_clause,
       optional($.where_clause),
       optional($.limit_clause),
     ),
 
-    update_fields: $ => choice(
-      $._update_field,
-      optional(
-        seq(
-          ',',
-          $._update_field,
-        ),
-      ),
+    update_clause: $ => seq(
+      keyword('UPDATE'),
+      field('table', $.symbole_definition),
     ),
 
-    _update_field: $ => seq(
-      $.symbole_definition,
-      '=',
-      choice(
-        $.symbole_definition,
+    set_clause: $ => seq(
+      keyword('SET'),
+      $.update_fields,
+    ),
+
+    update_fields: $ => repeat_comma(
+      seq(
+        $._field_expression,
+        '=',
         $._value,
       ),
     ),
-
     join_clause: $ => seq(
       optional(
         choice(
@@ -101,11 +80,7 @@ module.exports = grammar({
       $.symbole_definition,
       keyword('ON'),
       choice(
-        seq(
-          '(',
-          $.conditions,
-          ')',
-        ),
+        seq('(', $.conditions, ')'),
         $.condition,
       ),
     ),
@@ -136,7 +111,7 @@ module.exports = grammar({
     ),
 
     condition: $ => seq(
-      $.field_expression,
+      $._field_expression,
       choice(
         seq(
           choice(
@@ -153,13 +128,7 @@ module.exports = grammar({
           optional(keyword('NOT')),
           keyword('IN'),
           '(',
-          $._value,
-          optional(
-            seq(
-              ',',
-              $._value,
-            ),
-          ),
+          repeat_comma($._value),
           ')',
         ),
         seq(
@@ -181,47 +150,40 @@ module.exports = grammar({
       $.number,
     ),
 
-    field_expression: $ => seq(
-      $._field_expression,
-      optional(
-        seq(
-          '.',
-          $.field_expression,
-        ),
-      ),
-    ),
-
     symbole_definition: $ => seq(
-      $.field_expression,
+      $._field_expression,
       optional($._aliase),
     ),
 
     _aliase: $ => seq(
       keyword('AS'),
-      $._identifier,
+      field('alias', $._identifier),
     ),
 
-    _field_expression: $ => choice(
-      $._identifier,
-      seq('`', $._identifier, '`'),
-      seq('`', $._identifier, '`'),
-      seq('[', $._identifier, ']'),
+    _field_expression: $ => seq(
+        repeat(
+          seq($._identifier, '.'),
+      ),
+      field('name', $._identifier),
     ),
 
     _value: $ => choice(
-      $._identifier,
+      $._field_expression,
       $.number,
       $.string,
       $.boolean,
     ),
 
-    _identifier: () => /[a-zA-Z][a-zA-Z0-9_]*/,
+    _identifier: $ => choice(
+      $._name,
+      seq('`', $._name, '`'),
+      seq('[', $._name, ']'),
+    ),
+
+    _name: () => /[a-zA-Z][a-zA-Z0-9_]*/,
     number: () =>  /[1-9][0-9]*/,
     string: () =>  /'[^']*'/,
-    boolean: () =>  choice(
-      keyword('TRUE'),
-      keyword('FALSE'),
-    ),
+    boolean: () =>  choice(keyword('TRUE'), keyword('FALSE')),
     null: () =>  keyword('NULL'),
   },
 });
@@ -230,5 +192,14 @@ function keyword(word) {
   return choice(
     word.toLocaleUpperCase(),
     word.toLocaleLowerCase(),
+  );
+}
+
+function repeat_comma(rule) {
+  return seq(
+    repeat(
+      seq(rule, ','),
+    ),
+    rule,
   );
 }
