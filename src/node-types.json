@@ -1,5 +1,24 @@
 [
   {
+    "type": "binary_expression",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "field_expression",
+          "named": true
+        },
+        {
+          "type": "number",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "boolean",
     "named": true,
     "fields": {}
@@ -13,11 +32,19 @@
       "required": true,
       "types": [
         {
+          "type": "binary_expression",
+          "named": true
+        },
+        {
           "type": "boolean",
           "named": true
         },
         {
           "type": "field_expression",
+          "named": true
+        },
+        {
+          "type": "float",
           "named": true
         },
         {
@@ -121,11 +148,19 @@
             "named": false
           },
           {
+            "type": "binary_expression",
+            "named": true
+          },
+          {
             "type": "boolean",
             "named": true
           },
           {
             "type": "field_expression",
+            "named": true
+          },
+          {
+            "type": "float",
             "named": true
           },
           {
@@ -348,6 +383,10 @@
       "required": false,
       "types": [
         {
+          "type": "comment",
+          "named": true
+        },
+        {
           "type": "select_statement",
           "named": true
         },
@@ -451,11 +490,19 @@
       "required": true,
       "types": [
         {
+          "type": "binary_expression",
+          "named": true
+        },
+        {
           "type": "boolean",
           "named": true
         },
         {
           "type": "field_expression",
+          "named": true
+        },
+        {
+          "type": "float",
           "named": true
         },
         {
@@ -524,6 +571,14 @@
     }
   },
   {
+    "type": "%",
+    "named": false
+  },
+  {
+    "type": "&",
+    "named": false
+  },
+  {
     "type": "(",
     "named": false
   },
@@ -536,11 +591,23 @@
     "named": false
   },
   {
+    "type": "+",
+    "named": false
+  },
+  {
     "type": ",",
     "named": false
   },
   {
+    "type": "-",
+    "named": false
+  },
+  {
     "type": ".",
+    "named": false
+  },
+  {
+    "type": "/",
     "named": false
   },
   {
@@ -549,6 +616,10 @@
   },
   {
     "type": "<",
+    "named": false
+  },
+  {
+    "type": "<<",
     "named": false
   },
   {
@@ -569,6 +640,10 @@
   },
   {
     "type": ">=",
+    "named": false
+  },
+  {
+    "type": ">>",
     "named": false
   },
   {
@@ -692,8 +767,20 @@
     "named": false
   },
   {
+    "type": "^",
+    "named": false
+  },
+  {
     "type": "`",
     "named": false
+  },
+  {
+    "type": "comment",
+    "named": true
+  },
+  {
+    "type": "float",
+    "named": true
   },
   {
     "type": "number",
@@ -702,5 +789,13 @@
   {
     "type": "string",
     "named": true
+  },
+  {
+    "type": "|",
+    "named": false
+  },
+  {
+    "type": "~",
+    "named": false
   }
 ]

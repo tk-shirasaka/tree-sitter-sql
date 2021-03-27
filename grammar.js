@@ -5,7 +5,7 @@ module.exports = grammar({
 
   rules: {
     source_file: $ => repeat(
-      $._definition,
+      choice($.comment, $._definition),
     ),
 
     _definition: $ => seq(
@@ -192,7 +192,9 @@ module.exports = grammar({
     _value: $ => choice(
       $.function_call_expression,
       $.field_expression,
+      $.binary_expression,
       $.number,
+      $.float,
       $.string,
       $.boolean,
     ),
@@ -203,13 +205,31 @@ module.exports = grammar({
       field('arguments', repeat_comma($._value)),
       ')',
     ),
+    binary_expression: $ => seq(
+      choice($.field_expression, $.number),
+      choice('+', '-', '/', '*', '%', '&', '|', '^', '~', '<<', '>>'),
+      choice($.field_expression, $.number),
+    ),
     field_expression: $ => seq(
         repeat(
           seq($._identifier, '.'),
       ),
       field('name', $._identifier),
     ),
+    comment: () => token(choice(
+      seq(
+        '--',
+        repeat(/[^\r\n]/),
+        optional(/\r?\n/),
+      ),
+      seq(
+        '/*',
+        /[^*]*\*+([^/*][^*]*\*+)*/,
+        '/',
+      )
+    )),
     number: () =>  /[1-9]\d*/,
+    float: () =>  /[1-9]\d*\.\d+/,
     string: () =>  /'[^']*'/,
     boolean: () =>  choice(keyword('TRUE'), keyword('FALSE')),
     null: () =>  keyword('NULL'),

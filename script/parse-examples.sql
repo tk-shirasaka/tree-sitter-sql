@@ -1,3 +1,4 @@
+-- test select
 select
 top 50
   test.abc as test,
@@ -16,6 +17,9 @@ ORDER BY
   def asc,
   test.ghr desc
 
+/*
+ * test update
+ */
 update
 test
 set
