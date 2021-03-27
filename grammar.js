@@ -73,7 +73,7 @@ module.exports = grammar({
 
     update_fields: $ => repeat_comma(
       seq(
-        $._field_expression,
+        $.field_expression,
         '=',
         choice($._value, $.subquery),
       ),
@@ -178,7 +178,7 @@ module.exports = grammar({
 
     symbole_definition: $ => seq(
       choice(
-        $._field_expression,
+        $.field_expression,
         $.subquery,
       ),
       optional($._aliase),
@@ -189,19 +189,30 @@ module.exports = grammar({
       field('alias', $._identifier),
     ),
 
-    _field_expression: $ => seq(
+    _value: $ => choice(
+      $.function_call_expression,
+      $.field_expression,
+      $.number,
+      $.string,
+      $.boolean,
+    ),
+
+    function_call_expression: $ => seq(
+      field('function', $._name),
+      '(',
+      field('arguments', repeat_comma($._value)),
+      ')',
+    ),
+    field_expression: $ => seq(
         repeat(
           seq($._identifier, '.'),
       ),
       field('name', $._identifier),
     ),
-
-    _value: $ => choice(
-      $._field_expression,
-      $.number,
-      $.string,
-      $.boolean,
-    ),
+    number: () =>  /[1-9]\d*/,
+    string: () =>  /'[^']*'/,
+    boolean: () =>  choice(keyword('TRUE'), keyword('FALSE')),
+    null: () =>  keyword('NULL'),
 
     _identifier: $ => choice(
       $._name,
@@ -210,10 +221,6 @@ module.exports = grammar({
     ),
 
     _name: () => /[a-zA-Z][_a-zA-Z\d]*/,
-    number: () =>  /[1-9]\d*/,
-    string: () =>  /'[^']*'/,
-    boolean: () =>  choice(keyword('TRUE'), keyword('FALSE')),
-    null: () =>  keyword('NULL'),
   },
 });
 
