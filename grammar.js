@@ -26,6 +26,9 @@ module.exports = grammar({
       $.select_clause,
       optional($.from_clause),
       optional($.where_clause),
+      optional($.group_by_clause),
+      optional($.having_clause),
+      optional($.order_by_clause),
       optional($.limit_clause),
     ),
 
@@ -142,6 +145,30 @@ module.exports = grammar({
           $._value,
         ),
       ),
+    ),
+
+    group_by_clause: $ => seq(
+      keyword('GROUP'),
+      keyword('BY'),
+      field('fields', repeat_comma($.symbole_definition)),
+    ),
+
+    having_clause: $ => seq(
+      keyword('HAVING'),
+      field('fields', repeat_comma($.conditions)),
+    ),
+
+    order_by_clause: $ => seq(
+      keyword('ORDER'),
+      keyword('BY'),
+      field('fields', repeat_comma(
+        seq(
+          $.symbole_definition,
+          optional(
+            choice(keyword('ASC'), keyword('DESC')),
+          ),
+        ),
+      )),
     ),
 
     limit_clause: $ => seq(

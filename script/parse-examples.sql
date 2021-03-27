@@ -5,7 +5,16 @@ top 50
   from test as b
   inner join abc as c on (a = b)
 where
-a = 5;
+  test.abc = 5
+GROUP BY
+  test.def,
+  ghi
+HAVING
+  count(1) = 1
+ORDER BY
+  test.abc,
+  def asc,
+  test.ghr desc
 
 update
 test
