@@ -1,14 +1,25 @@
 module.exports = grammar({
   name: 'sql',
 
+  word: $ => $._name,
+
   rules: {
     source_file: $ => repeat(
       $._definition,
     ),
 
-    _definition: $ => choice(
+    _definition: $ => seq(
+      choice(
+        $.select_statement,
+        $.update_statement,
+      ),
+      optional(';'),
+    ),
+
+    subquery: $ => seq(
+      '(',
       $.select_statement,
-      $.update_statement,
+      ')',
     ),
 
     select_statement: $ => seq(
@@ -16,7 +27,6 @@ module.exports = grammar({
       optional($.from_clause),
       optional($.where_clause),
       optional($.limit_clause),
-      optional(';'),
     ),
 
     select_clause: $ => seq(
@@ -36,10 +46,7 @@ module.exports = grammar({
 
     from_clause: $ => seq(
       keyword('FROM'),
-      choice(
-        field('table', $.symbole_definition),
-        seq('(', $.select_statement, ')', $._aliase),
-      ),
+      field('table', $.symbole_definition),
       optional($.join_clause),
     ),
 
@@ -65,9 +72,10 @@ module.exports = grammar({
       seq(
         $._field_expression,
         '=',
-        $._value,
+        choice($._value, $.subquery),
       ),
     ),
+
     join_clause: $ => seq(
       optional(
         choice(
@@ -79,49 +87,40 @@ module.exports = grammar({
       keyword('JOIN'),
       $.symbole_definition,
       keyword('ON'),
-      choice(
-        seq('(', $.conditions, ')'),
-        $.condition,
-      ),
+      $.conditions,
     ),
 
-    where_clause: $ => choice(
+    where_clause: $ => seq(
       keyword('WHERE'),
       $.conditions,
     ),
 
-    conditions: $ => seq(
-      $.condition,
-      optional(
-        seq(
+    conditions: $ => choice(
+      $.subcondition,
+      seq(
+        $.condition,
+        repeat(
           choice(
-            keyword('AND'),
-            keyword('OR'),
+            seq(keyword('AND'), $.condition),
+            seq(keyword('AND'), $.subcondition),
+            seq(keyword('OR'), $.condition),
+            seq(keyword('OR'), $.subcondition),
           ),
-          choice(
-            seq(
-              '(',
-              $.conditions,
-              ')',
-            ),
-            $.conditions,
-          ),
-        )
+        ),
       ),
     ),
 
+    subcondition: $ => seq(
+      '(',
+      $.conditions,
+      ')',
+    ),
+
     condition: $ => seq(
-      $._field_expression,
+      $._value,
       choice(
         seq(
-          choice(
-            '=',
-            '<>',
-            '<',
-            '<=',
-            '>',
-            '>=',
-          ),
+          choice('=', '<>', '<', '<=', '>', '>='),
           $._value,
         ),
         seq(
@@ -151,7 +150,10 @@ module.exports = grammar({
     ),
 
     symbole_definition: $ => seq(
-      $._field_expression,
+      choice(
+        $._field_expression,
+        $.subquery,
+      ),
       optional($._aliase),
     ),
 
@@ -180,8 +182,8 @@ module.exports = grammar({
       seq('[', $._name, ']'),
     ),
 
-    _name: () => /[a-zA-Z][a-zA-Z0-9_]*/,
-    number: () =>  /[1-9][0-9]*/,
+    _name: () => /[a-zA-Z][_a-zA-Z\d]*/,
+    number: () =>  /[1-9]\d*/,
     string: () =>  /'[^']*'/,
     boolean: () =>  choice(keyword('TRUE'), keyword('FALSE')),
     null: () =>  keyword('NULL'),
@@ -189,10 +191,11 @@ module.exports = grammar({
 });
 
 function keyword(word) {
-  return choice(
+  const result = choice(
     word.toLocaleUpperCase(),
     word.toLocaleLowerCase(),
   );
+  return alias(result , word);
 }
 
 function repeat_comma(rule) {
