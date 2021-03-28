@@ -45,7 +45,18 @@
   {
     "type": "clause_statement",
     "named": true,
-    "fields": {},
+    "fields": {
+      "alias": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    },
     "children": {
       "multiple": true,
       "required": false,
@@ -76,6 +87,10 @@
         },
         {
           "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "name",
           "named": true
         },
         {
@@ -246,7 +261,17 @@
   {
     "type": "identifier",
     "named": true,
-    "fields": {}
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "name",
+          "named": true
+        }
+      ]
+    }
   },
   {
     "type": "join_clause",
@@ -277,6 +302,11 @@
         }
       ]
     }
+  },
+  {
+    "type": "name",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "null",
@@ -428,7 +458,7 @@
     "type": "symbole_definition",
     "named": true,
     "fields": {
-      "name": {
+      "alias": {
         "multiple": false,
         "required": false,
         "types": [

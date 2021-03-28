@@ -21,7 +21,7 @@ module.exports = grammar({
     clause_body: $ => $.clause_statement,
 
     clause_statement: $ => repeat_comma(
-      $._symbole_definition,
+      $.symbole_definition,
     ),
 
     select_statement: $ => seq(
@@ -45,7 +45,7 @@ module.exports = grammar({
           seq(keyword('TOP'), $.number),
         ),
         repeat_comma(
-          choice('*', $._symbole_definition),
+          choice('*', $.symbole_definition),
         ),
       ),
       $.clause_statement
@@ -57,7 +57,7 @@ module.exports = grammar({
     ),
 
     _from_body: $ => seq(
-      alias($._symbole_definition, $.clause_statement),
+      alias($.symbole_definition, $.clause_statement),
       repeat($.join_clause),
     ),
 
@@ -74,7 +74,7 @@ module.exports = grammar({
       alias($._update_body, $.clause_body),
     ),
 
-    _update_body: $ => alias($._symbole_definition, $.clause_statement),
+    _update_body: $ => alias($.symbole_definition, $.clause_statement),
 
     set_clause: $ => seq(
       keyword('SET'),
@@ -107,7 +107,7 @@ module.exports = grammar({
       alias($._conditions_body, $.clause_body),
     ),
 
-    _join_body: $ => alias($._symbole_definition, $.clause_statement),
+    _join_body: $ => alias($.symbole_definition, $.clause_statement),
 
     where_clause: $ => seq(
       keyword('WHERE'),
@@ -165,7 +165,7 @@ module.exports = grammar({
       alias($._group_by_body, $.clause_body),
     ),
 
-    _group_by_body: $ => alias(repeat_comma($._symbole_definition), $.clause_statement),
+    _group_by_body: $ => alias(repeat_comma($.symbole_definition), $.clause_statement),
 
     having_clause: $ => seq(
       keyword('HAVING'),
@@ -181,7 +181,7 @@ module.exports = grammar({
     _order_by_body: $ => alias(
         repeat_comma(
         seq(
-          $._symbole_definition,
+          $.symbole_definition,
           optional(
             choice(keyword('ASC'), keyword('DESC')),
           ),
@@ -197,8 +197,6 @@ module.exports = grammar({
 
     _limit_body: $ => alias($.number, $.clause_statement),
 
-    _symbole_definition: $ => $.symbole_definition,
-
     symbole_definition: $ => seq(
       choice(
         $.identifier,
@@ -207,10 +205,7 @@ module.exports = grammar({
       optional(
         seq(
           keyword('AS'),
-          field(
-            'name',
-            alias($._name, $.identifier),
-          ),
+          field('alias', alias($._name, $.identifier)),
         ),
       ),
     ),
@@ -249,13 +244,11 @@ module.exports = grammar({
         '/',
       )
     )),
-    identifier: $ => repeat_str(
-      choice(
-        $._name,
-        seq('`', $._name, '`'),
-        seq('[', $._name, ']'),
-      ),
-      '.',
+    identifier: $ => repeat_str($.name, '.'),
+    name: $ => choice(
+      $._name,
+      seq('`', $._name, '`'),
+      seq('[', $._name, ']'),
     ),
     number: () =>  /[1-9]\d*/,
     float: () =>  /[1-9]\d*\.\d+/,
