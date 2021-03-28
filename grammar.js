@@ -19,7 +19,7 @@ module.exports = grammar({
     subquery: $ => bracket_rule($.select_statement),
 
     clause_statement: $ => repeat_comma(
-      $.symbole_definition,
+      $._symbole_definition,
     ),
 
     select_statement: $ => seq(
@@ -40,7 +40,7 @@ module.exports = grammar({
             seq(keyword('TOP'), $.number),
           ),
           repeat_comma(
-            choice('*', $.symbole_definition),
+            choice('*', $._symbole_definition),
           ),
         ),
         $.clause_statement
@@ -49,7 +49,7 @@ module.exports = grammar({
 
     from_clause: $ => seq(
       keyword('FROM'),
-      alias($.symbole_definition, $.clause_statement),
+      alias($._symbole_definition, $.clause_statement),
       repeat($.join_clause),
     ),
 
@@ -63,7 +63,7 @@ module.exports = grammar({
 
     update_clause: $ => seq(
       keyword('UPDATE'),
-      alias($.symbole_definition, $.clause_statement),
+      alias($._symbole_definition, $.clause_statement),
     ),
 
     set_clause: $ => seq(
@@ -90,7 +90,7 @@ module.exports = grammar({
         ),
       ),
       keyword('JOIN'),
-      alias($.symbole_definition, $.clause_statement),
+      alias($._symbole_definition, $.clause_statement),
       keyword('ON'),
       alias($.conditions, $.clause_statement),
     ),
@@ -146,7 +146,7 @@ module.exports = grammar({
     group_by_clause: $ => seq(
       keyword('GROUP'),
       keyword('BY'),
-      alias(repeat_comma($.symbole_definition), $.clause_statement),
+      alias(repeat_comma($._symbole_definition), $.clause_statement),
     ),
 
     having_clause: $ => seq(
@@ -160,7 +160,7 @@ module.exports = grammar({
       alias(
           repeat_comma(
           seq(
-            $.symbole_definition,
+            $._symbole_definition,
             optional(
               choice(keyword('ASC'), keyword('DESC')),
             ),
@@ -174,6 +174,8 @@ module.exports = grammar({
       keyword('LIMIT'),
       alias($.number, $.clause_statement),
     ),
+
+    _symbole_definition: $ => $.symbole_definition,
 
     symbole_definition: $ => seq(
       choice(

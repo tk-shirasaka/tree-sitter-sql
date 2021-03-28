@@ -75,7 +75,7 @@
             "members": [
               {
                 "type": "SYMBOL",
-                "name": "symbole_definition"
+                "name": "_symbole_definition"
               },
               {
                 "type": "STRING",
@@ -86,7 +86,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "symbole_definition"
+          "name": "_symbole_definition"
         }
       ]
     },
@@ -249,7 +249,7 @@
                             },
                             {
                               "type": "SYMBOL",
-                              "name": "symbole_definition"
+                              "name": "_symbole_definition"
                             }
                           ]
                         },
@@ -269,7 +269,7 @@
                       },
                       {
                         "type": "SYMBOL",
-                        "name": "symbole_definition"
+                        "name": "_symbole_definition"
                       }
                     ]
                   }
@@ -307,7 +307,7 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "symbole_definition"
+            "name": "_symbole_definition"
           },
           "named": true,
           "value": "clause_statement"
@@ -390,7 +390,7 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "symbole_definition"
+            "name": "_symbole_definition"
           },
           "named": true,
           "value": "clause_statement"
@@ -604,7 +604,7 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "symbole_definition"
+            "name": "_symbole_definition"
           },
           "named": true,
           "value": "clause_statement"
@@ -1113,7 +1113,7 @@
                   "members": [
                     {
                       "type": "SYMBOL",
-                      "name": "symbole_definition"
+                      "name": "_symbole_definition"
                     },
                     {
                       "type": "STRING",
@@ -1124,7 +1124,7 @@
               },
               {
                 "type": "SYMBOL",
-                "name": "symbole_definition"
+                "name": "_symbole_definition"
               }
             ]
           },
@@ -1219,7 +1219,7 @@
                       "members": [
                         {
                           "type": "SYMBOL",
-                          "name": "symbole_definition"
+                          "name": "_symbole_definition"
                         },
                         {
                           "type": "CHOICE",
@@ -1284,7 +1284,7 @@
                 "members": [
                   {
                     "type": "SYMBOL",
-                    "name": "symbole_definition"
+                    "name": "_symbole_definition"
                   },
                   {
                     "type": "CHOICE",
@@ -1375,6 +1375,10 @@
           "value": "clause_statement"
         }
       ]
+    },
+    "_symbole_definition": {
+      "type": "SYMBOL",
+      "name": "symbole_definition"
     },
     "symbole_definition": {
       "type": "SEQ",
