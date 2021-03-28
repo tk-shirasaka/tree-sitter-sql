@@ -8,7 +8,7 @@
       "required": true,
       "types": [
         {
-          "type": "field_expression",
+          "type": "identifier",
           "named": true
         },
         {
@@ -22,6 +22,76 @@
     "type": "boolean",
     "named": true,
     "fields": {}
+  },
+  {
+    "type": "clause_statement",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "binary_expression",
+          "named": true
+        },
+        {
+          "type": "boolean",
+          "named": true
+        },
+        {
+          "type": "condition",
+          "named": true
+        },
+        {
+          "type": "float",
+          "named": true
+        },
+        {
+          "type": "function_call_expression",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "number",
+          "named": true
+        },
+        {
+          "type": "select_statement",
+          "named": true
+        },
+        {
+          "type": "string",
+          "named": true
+        },
+        {
+          "type": "subcondition",
+          "named": true
+        },
+        {
+          "type": "subquery",
+          "named": true
+        },
+        {
+          "type": "symbole_definition",
+          "named": true
+        }
+      ]
+    }
   },
   {
     "type": "condition",
@@ -40,15 +110,15 @@
           "named": true
         },
         {
-          "type": "field_expression",
-          "named": true
-        },
-        {
           "type": "float",
           "named": true
         },
         {
           "type": "function_call_expression",
+          "named": true
+        },
+        {
+          "type": "identifier",
           "named": true
         },
         {
@@ -86,48 +156,17 @@
     }
   },
   {
-    "type": "field_expression",
-    "named": true,
-    "fields": {
-      "name": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "[",
-            "named": false
-          },
-          {
-            "type": "]",
-            "named": false
-          },
-          {
-            "type": "`",
-            "named": false
-          }
-        ]
-      }
-    }
-  },
-  {
     "type": "from_clause",
     "named": true,
-    "fields": {
-      "table": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "symbole_definition",
-            "named": true
-          }
-        ]
-      }
-    },
+    "fields": {},
     "children": {
-      "multiple": false,
-      "required": false,
+      "multiple": true,
+      "required": true,
       "types": [
+        {
+          "type": "clause_statement",
+          "named": true
+        },
         {
           "type": "join_clause",
           "named": true
@@ -139,85 +178,86 @@
     "type": "function_call_expression",
     "named": true,
     "fields": {
-      "arguments": {
-        "multiple": true,
+      "function": {
+        "multiple": false,
         "required": true,
         "types": [
           {
-            "type": ",",
-            "named": false
-          },
-          {
-            "type": "binary_expression",
-            "named": true
-          },
-          {
-            "type": "boolean",
-            "named": true
-          },
-          {
-            "type": "field_expression",
-            "named": true
-          },
-          {
-            "type": "float",
-            "named": true
-          },
-          {
-            "type": "function_call_expression",
-            "named": true
-          },
-          {
-            "type": "number",
-            "named": true
-          },
-          {
-            "type": "string",
+            "type": "identifier",
             "named": true
           }
         ]
       }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "binary_expression",
+          "named": true
+        },
+        {
+          "type": "boolean",
+          "named": true
+        },
+        {
+          "type": "float",
+          "named": true
+        },
+        {
+          "type": "function_call_expression",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "number",
+          "named": true
+        },
+        {
+          "type": "string",
+          "named": true
+        }
+      ]
     }
   },
   {
     "type": "group_by_clause",
     "named": true,
-    "fields": {
-      "fields": {
-        "multiple": true,
-        "required": true,
-        "types": [
-          {
-            "type": ",",
-            "named": false
-          },
-          {
-            "type": "symbole_definition",
-            "named": true
-          }
-        ]
-      }
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "clause_statement",
+          "named": true
+        }
+      ]
     }
   },
   {
     "type": "having_clause",
     "named": true,
-    "fields": {
-      "fields": {
-        "multiple": true,
-        "required": true,
-        "types": [
-          {
-            "type": ",",
-            "named": false
-          },
-          {
-            "type": "conditions",
-            "named": true
-          }
-        ]
-      }
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "clause_statement",
+          "named": true
+        }
+      ]
     }
+  },
+  {
+    "type": "identifier",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "join_clause",
@@ -228,11 +268,7 @@
       "required": true,
       "types": [
         {
-          "type": "conditions",
-          "named": true
-        },
-        {
-          "type": "symbole_definition",
+          "type": "clause_statement",
           "named": true
         }
       ]
@@ -247,7 +283,7 @@
       "required": true,
       "types": [
         {
-          "type": "number",
+          "type": "clause_statement",
           "named": true
         }
       ]
@@ -261,60 +297,28 @@
   {
     "type": "order_by_clause",
     "named": true,
-    "fields": {
-      "fields": {
-        "multiple": true,
-        "required": true,
-        "types": [
-          {
-            "type": ",",
-            "named": false
-          },
-          {
-            "type": "ASC",
-            "named": false
-          },
-          {
-            "type": "DESC",
-            "named": false
-          },
-          {
-            "type": "symbole_definition",
-            "named": true
-          }
-        ]
-      }
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "clause_statement",
+          "named": true
+        }
+      ]
     }
   },
   {
     "type": "select_clause",
     "named": true,
-    "fields": {
-      "fields": {
-        "multiple": true,
-        "required": true,
-        "types": [
-          {
-            "type": "*",
-            "named": false
-          },
-          {
-            "type": ",",
-            "named": false
-          },
-          {
-            "type": "symbole_definition",
-            "named": true
-          }
-        ]
-      }
-    },
+    "fields": {},
     "children": {
-      "multiple": false,
-      "required": false,
+      "multiple": true,
+      "required": true,
       "types": [
         {
-          "type": "number",
+          "type": "clause_statement",
           "named": true
         }
       ]
@@ -364,11 +368,11 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": true,
       "types": [
         {
-          "type": "update_fields",
+          "type": "clause_statement",
           "named": true
         }
       ]
@@ -431,21 +435,13 @@
     "type": "symbole_definition",
     "named": true,
     "fields": {
-      "alias": {
-        "multiple": true,
+      "name": {
+        "multiple": false,
         "required": false,
         "types": [
           {
-            "type": "[",
-            "named": false
-          },
-          {
-            "type": "]",
-            "named": false
-          },
-          {
-            "type": "`",
-            "named": false
+            "type": "identifier",
+            "named": true
           }
         ]
       }
@@ -455,7 +451,7 @@
       "required": true,
       "types": [
         {
-          "type": "field_expression",
+          "type": "identifier",
           "named": true
         },
         {
@@ -468,57 +464,13 @@
   {
     "type": "update_clause",
     "named": true,
-    "fields": {
-      "table": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "symbole_definition",
-            "named": true
-          }
-        ]
-      }
-    }
-  },
-  {
-    "type": "update_fields",
-    "named": true,
     "fields": {},
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": true,
       "types": [
         {
-          "type": "binary_expression",
-          "named": true
-        },
-        {
-          "type": "boolean",
-          "named": true
-        },
-        {
-          "type": "field_expression",
-          "named": true
-        },
-        {
-          "type": "float",
-          "named": true
-        },
-        {
-          "type": "function_call_expression",
-          "named": true
-        },
-        {
-          "type": "number",
-          "named": true
-        },
-        {
-          "type": "string",
-          "named": true
-        },
-        {
-          "type": "subquery",
+          "type": "clause_statement",
           "named": true
         }
       ]
@@ -564,7 +516,7 @@
       "required": true,
       "types": [
         {
-          "type": "conditions",
+          "type": "clause_statement",
           "named": true
         }
       ]
@@ -728,6 +680,10 @@
   },
   {
     "type": "ORDER",
+    "named": false
+  },
+  {
+    "type": "OUTER",
     "named": false
   },
   {

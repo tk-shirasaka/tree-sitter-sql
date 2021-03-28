@@ -16,10 +16,10 @@ module.exports = grammar({
       optional(';'),
     ),
 
-    subquery: $ => seq(
-      '(',
-      $.select_statement,
-      ')',
+    subquery: $ => bracket_rule($.select_statement),
+
+    clause_statement: $ => repeat_comma(
+      $.symbole_definition,
     ),
 
     select_statement: $ => seq(
@@ -34,28 +34,28 @@ module.exports = grammar({
 
     select_clause: $ => seq(
       keyword('SELECT'),
-      optional(
-        seq(keyword('TOP'), $.number),
-      ),
-      field('fields', $._select_fields),
-    ),
-
-    _select_fields: $ => repeat_comma(
-      choice(
-        '*',
-        $.symbole_definition,
+      alias(
+        seq(
+          optional(
+            seq(keyword('TOP'), $.number),
+          ),
+          repeat_comma(
+            choice('*', $.symbole_definition),
+          ),
+        ),
+        $.clause_statement
       ),
     ),
 
     from_clause: $ => seq(
       keyword('FROM'),
-      field('table', $.symbole_definition),
-      optional($.join_clause),
+      alias($.symbole_definition, $.clause_statement),
+      repeat($.join_clause),
     ),
 
     update_statement: $ => seq(
       $.update_clause,
-      optional($.join_clause),
+      repeat($.join_clause),
       $.set_clause,
       optional($.where_clause),
       optional($.limit_clause),
@@ -63,19 +63,20 @@ module.exports = grammar({
 
     update_clause: $ => seq(
       keyword('UPDATE'),
-      field('table', $.symbole_definition),
+      alias($.symbole_definition, $.clause_statement),
     ),
 
     set_clause: $ => seq(
       keyword('SET'),
-      $.update_fields,
-    ),
-
-    update_fields: $ => repeat_comma(
-      seq(
-        $.field_expression,
-        '=',
-        choice($._value, $.subquery),
+      alias(
+        repeat_comma(
+          seq(
+            $.identifier,
+            '=',
+            choice($._value, $.subquery),
+          ),
+        ),
+        $.clause_statement,
       ),
     ),
 
@@ -83,19 +84,20 @@ module.exports = grammar({
       optional(
         choice(
           keyword('INNER'),
+          keyword('OUTER'),
           keyword('LEFT'),
           keyword('RIGHT'),
         ),
       ),
       keyword('JOIN'),
-      $.symbole_definition,
+      alias($.symbole_definition, $.clause_statement),
       keyword('ON'),
-      $.conditions,
+      alias($.conditions, $.clause_statement),
     ),
 
     where_clause: $ => seq(
       keyword('WHERE'),
-      $.conditions,
+      alias($.conditions, $.clause_statement),
     ),
 
     conditions: $ => choice(
@@ -113,11 +115,7 @@ module.exports = grammar({
       ),
     ),
 
-    subcondition: $ => seq(
-      '(',
-      $.conditions,
-      ')',
-    ),
+    subcondition: $ => bracket_rule($.conditions),
 
     condition: $ => seq(
       $._value,
@@ -129,9 +127,7 @@ module.exports = grammar({
         seq(
           optional(keyword('NOT')),
           keyword('IN'),
-          '(',
-          repeat_comma($._value),
-          ')',
+          bracket_rule(repeat_comma($._value))
         ),
         seq(
           keyword('IS'),
@@ -150,48 +146,54 @@ module.exports = grammar({
     group_by_clause: $ => seq(
       keyword('GROUP'),
       keyword('BY'),
-      field('fields', repeat_comma($.symbole_definition)),
+      alias(repeat_comma($.symbole_definition), $.clause_statement),
     ),
 
     having_clause: $ => seq(
       keyword('HAVING'),
-      field('fields', repeat_comma($.conditions)),
+      alias($.conditions, $.clause_statement),
     ),
 
     order_by_clause: $ => seq(
       keyword('ORDER'),
       keyword('BY'),
-      field('fields', repeat_comma(
-        seq(
-          $.symbole_definition,
-          optional(
-            choice(keyword('ASC'), keyword('DESC')),
+      alias(
+          repeat_comma(
+          seq(
+            $.symbole_definition,
+            optional(
+              choice(keyword('ASC'), keyword('DESC')),
+            ),
           ),
         ),
-      )),
+        $.clause_statement,
+      ),
     ),
 
     limit_clause: $ => seq(
       keyword('LIMIT'),
-      $.number,
+      alias($.number, $.clause_statement),
     ),
 
     symbole_definition: $ => seq(
       choice(
-        $.field_expression,
+        $.identifier,
         $.subquery,
       ),
-      optional($._aliase),
-    ),
-
-    _aliase: $ => seq(
-      keyword('AS'),
-      field('alias', $._identifier),
+      optional(
+        seq(
+          keyword('AS'),
+          field(
+            'name',
+            alias($._name, $.identifier),
+          ),
+        ),
+      ),
     ),
 
     _value: $ => choice(
       $.function_call_expression,
-      $.field_expression,
+      $.identifier,
       $.binary_expression,
       $.number,
       $.float,
@@ -200,21 +202,16 @@ module.exports = grammar({
     ),
 
     function_call_expression: $ => seq(
-      field('function', $._name),
-      '(',
-      field('arguments', repeat_comma($._value)),
-      ')',
+      field(
+        'function',
+        alias($._name, $.identifier),
+      ),
+      bracket_rule(repeat_comma($._value)),
     ),
     binary_expression: $ => seq(
-      choice($.field_expression, $.number),
+      choice($.identifier, $.number),
       choice('+', '-', '/', '*', '%', '&', '|', '^', '~', '<<', '>>'),
-      choice($.field_expression, $.number),
-    ),
-    field_expression: $ => seq(
-        repeat(
-          seq($._identifier, '.'),
-      ),
-      field('name', $._identifier),
+      choice($.identifier, $.number),
     ),
     comment: () => token(choice(
       seq(
@@ -228,17 +225,19 @@ module.exports = grammar({
         '/',
       )
     )),
+    identifier: $ => repeat_str(
+      choice(
+        $._name,
+        seq('`', $._name, '`'),
+        seq('[', $._name, ']'),
+      ),
+      '.',
+    ),
     number: () =>  /[1-9]\d*/,
     float: () =>  /[1-9]\d*\.\d+/,
     string: () =>  /'[^']*'/,
     boolean: () =>  choice(keyword('TRUE'), keyword('FALSE')),
     null: () =>  keyword('NULL'),
-
-    _identifier: $ => choice(
-      $._name,
-      seq('`', $._name, '`'),
-      seq('[', $._name, ']'),
-    ),
 
     _name: () => /[a-zA-Z][_a-zA-Z\d]*/,
   },
@@ -253,10 +252,22 @@ function keyword(word) {
 }
 
 function repeat_comma(rule) {
+  return repeat_str(rule, ',');
+}
+
+function repeat_str(rule, str) {
   return seq(
     repeat(
-      seq(rule, ','),
+      seq(rule, str),
     ),
     rule,
+  );
+}
+
+function bracket_rule(rule) {
+  return seq(
+    '(',
+    rule,
+    ')',
   );
 }
