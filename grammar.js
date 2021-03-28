@@ -18,6 +18,8 @@ module.exports = grammar({
 
     subquery: $ => bracket_rule($.select_statement),
 
+    clause_body: $ => $.clause_statement,
+
     clause_statement: $ => repeat_comma(
       $._symbole_definition,
     ),
@@ -34,21 +36,27 @@ module.exports = grammar({
 
     select_clause: $ => seq(
       keyword('SELECT'),
-      alias(
-        seq(
-          optional(
-            seq(keyword('TOP'), $.number),
-          ),
-          repeat_comma(
-            choice('*', $._symbole_definition),
-          ),
+      alias($._select_body, $.clause_body),
+    ),
+
+    _select_body: $ => alias(
+      seq(
+        optional(
+          seq(keyword('TOP'), $.number),
         ),
-        $.clause_statement
+        repeat_comma(
+          choice('*', $._symbole_definition),
+        ),
       ),
+      $.clause_statement
     ),
 
     from_clause: $ => seq(
       keyword('FROM'),
+      alias($._from_body, $.clause_body),
+    ),
+
+    _from_body: $ => seq(
       alias($._symbole_definition, $.clause_statement),
       repeat($.join_clause),
     ),
@@ -63,21 +71,25 @@ module.exports = grammar({
 
     update_clause: $ => seq(
       keyword('UPDATE'),
-      alias($._symbole_definition, $.clause_statement),
+      alias($._update_body, $.clause_body),
     ),
+
+    _update_body: $ => alias($._symbole_definition, $.clause_statement),
 
     set_clause: $ => seq(
       keyword('SET'),
-      alias(
-        repeat_comma(
-          seq(
-            $.identifier,
-            '=',
-            choice($._value, $.subquery),
-          ),
+      alias($._set_body, $.clause_statement),
+    ),
+
+    _set_body: $ => alias(
+      repeat_comma(
+        seq(
+          $.identifier,
+          '=',
+          choice($._value, $.subquery),
         ),
-        $.clause_statement,
       ),
+      $.clause_statement,
     ),
 
     join_clause: $ => seq(
@@ -90,17 +102,21 @@ module.exports = grammar({
         ),
       ),
       keyword('JOIN'),
-      alias($._symbole_definition, $.clause_statement),
+      alias($._join_body, $.clause_body),
       keyword('ON'),
-      alias($.conditions, $.clause_statement),
+      alias($._conditions_body, $.clause_body),
     ),
+
+    _join_body: $ => alias($._symbole_definition, $.clause_statement),
 
     where_clause: $ => seq(
       keyword('WHERE'),
-      alias($.conditions, $.clause_statement),
+      alias($._conditions_body, $.clause_body),
     ),
 
-    conditions: $ => choice(
+    _conditions_body: $ => alias($._conditions, $.clause_statement),
+
+    _conditions: $ => choice(
       $.subcondition,
       seq(
         $.condition,
@@ -115,7 +131,7 @@ module.exports = grammar({
       ),
     ),
 
-    subcondition: $ => bracket_rule($.conditions),
+    subcondition: $ => bracket_rule($._conditions),
 
     condition: $ => seq(
       $._value,
@@ -146,34 +162,40 @@ module.exports = grammar({
     group_by_clause: $ => seq(
       keyword('GROUP'),
       keyword('BY'),
-      alias(repeat_comma($._symbole_definition), $.clause_statement),
+      alias($._group_by_body, $.clause_body),
     ),
+
+    _group_by_body: $ => alias(repeat_comma($._symbole_definition), $.clause_statement),
 
     having_clause: $ => seq(
       keyword('HAVING'),
-      alias($.conditions, $.clause_statement),
+      alias($._conditions_body, $.clause_body),
     ),
 
     order_by_clause: $ => seq(
       keyword('ORDER'),
       keyword('BY'),
-      alias(
-          repeat_comma(
-          seq(
-            $._symbole_definition,
-            optional(
-              choice(keyword('ASC'), keyword('DESC')),
-            ),
+      alias($._order_by_body, $.clause_body),
+    ),
+
+    _order_by_body: $ => alias(
+        repeat_comma(
+        seq(
+          $._symbole_definition,
+          optional(
+            choice(keyword('ASC'), keyword('DESC')),
           ),
         ),
-        $.clause_statement,
       ),
+      $.clause_statement,
     ),
 
     limit_clause: $ => seq(
       keyword('LIMIT'),
-      alias($.number, $.clause_statement),
+      alias($._limit_body, $.clause_body),
     ),
+
+    _limit_body: $ => alias($.number, $.clause_statement),
 
     _symbole_definition: $ => $.symbole_definition,
 
