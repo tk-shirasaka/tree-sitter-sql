@@ -1,6 +1,8 @@
 -- test select
 select
 top 50
+  test.*,
+  *,
   test.abc as test,
   test.abc as test2,
   test.def as test3

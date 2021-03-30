@@ -45,7 +45,11 @@ module.exports = grammar({
           seq(keyword('TOP'), $.number),
         ),
         repeat_comma(
-          choice('*', $.symbole_definition),
+          choice(
+            '*',
+            seq(repeat_str($.name, '.'), '.', '*'),
+            $.symbole_definition
+          ),
         ),
       ),
       $.clause_statement

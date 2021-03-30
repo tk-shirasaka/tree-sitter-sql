@@ -263,6 +263,44 @@
                           "value": "*"
                         },
                         {
+                          "type": "SEQ",
+                          "members": [
+                            {
+                              "type": "SEQ",
+                              "members": [
+                                {
+                                  "type": "REPEAT",
+                                  "content": {
+                                    "type": "SEQ",
+                                    "members": [
+                                      {
+                                        "type": "SYMBOL",
+                                        "name": "name"
+                                      },
+                                      {
+                                        "type": "STRING",
+                                        "value": "."
+                                      }
+                                    ]
+                                  }
+                                },
+                                {
+                                  "type": "SYMBOL",
+                                  "name": "name"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "STRING",
+                              "value": "."
+                            },
+                            {
+                              "type": "STRING",
+                              "value": "*"
+                            }
+                          ]
+                        },
+                        {
                           "type": "SYMBOL",
                           "name": "symbole_definition"
                         }
@@ -281,6 +319,44 @@
                   {
                     "type": "STRING",
                     "value": "*"
+                  },
+                  {
+                    "type": "SEQ",
+                    "members": [
+                      {
+                        "type": "SEQ",
+                        "members": [
+                          {
+                            "type": "REPEAT",
+                            "content": {
+                              "type": "SEQ",
+                              "members": [
+                                {
+                                  "type": "SYMBOL",
+                                  "name": "name"
+                                },
+                                {
+                                  "type": "STRING",
+                                  "value": "."
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "type": "SYMBOL",
+                            "name": "name"
+                          }
+                        ]
+                      },
+                      {
+                        "type": "STRING",
+                        "value": "."
+                      },
+                      {
+                        "type": "STRING",
+                        "value": "*"
+                      }
+                    ]
                   },
                   {
                     "type": "SYMBOL",
