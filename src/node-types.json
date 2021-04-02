@@ -164,6 +164,11 @@
     }
   },
   {
+    "type": "float",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "from_clause",
     "named": true,
     "fields": {},
@@ -310,6 +315,11 @@
   },
   {
     "type": "null",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "number",
     "named": true,
     "fields": {}
   },
@@ -755,14 +765,6 @@
   },
   {
     "type": "comment",
-    "named": true
-  },
-  {
-    "type": "float",
-    "named": true
-  },
-  {
-    "type": "number",
     "named": true
   },
   {

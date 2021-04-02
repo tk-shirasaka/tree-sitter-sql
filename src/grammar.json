@@ -1895,12 +1895,30 @@
       ]
     },
     "number": {
-      "type": "PATTERN",
-      "value": "[1-9]\\d*"
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "PATTERN",
+          "value": "0?\\d+"
+        },
+        {
+          "type": "PATTERN",
+          "value": "0[xX][0-9a-fA-F]+"
+        }
+      ]
     },
     "float": {
-      "type": "PATTERN",
-      "value": "[1-9]\\d*\\.\\d+"
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "PATTERN",
+          "value": "0\\.\\d+"
+        },
+        {
+          "type": "PATTERN",
+          "value": "[1-9]\\d*\\.\\d+"
+        }
+      ]
     },
     "string": {
       "type": "PATTERN",
