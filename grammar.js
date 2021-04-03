@@ -39,20 +39,24 @@ module.exports = grammar({
       alias($._select_body, $.clause_body),
     ),
 
-    _select_body: $ => alias(
-      seq(
-        optional(
-          seq(keyword('TOP'), $.number),
-        ),
-        repeat_comma(
-          choice(
-            '*',
-            seq(repeat_str($.name, '.'), '.', '*'),
-            $.symbole_definition
-          ),
-        ),
+    _select_body: $ => seq(
+      optional(
+        alias($._select_top_statement, $.clause_statement),
       ),
-      $.clause_statement
+      repeat_comma(
+        alias($._select_fields_statement, $.clause_statement),
+      ),
+    ),
+
+    _select_top_statement: $ => seq(
+      keyword('TOP'),
+      $.number,
+    ),
+
+    _select_fields_statement: $ => choice(
+      '*',
+      seq(repeat_str($.name, '.'), '.', '*'),
+      $.symbole_definition
     ),
 
     from_clause: $ => seq(
@@ -85,15 +89,14 @@ module.exports = grammar({
       alias($._set_body, $.clause_statement),
     ),
 
-    _set_body: $ => alias(
-      repeat_comma(
-        seq(
-          $.identifier,
-          '=',
-          choice($._value, $.subquery),
-        ),
-      ),
-      $.clause_statement,
+    _set_body: $ => repeat_comma(
+      alias($._set_statement, $.clause_statement),
+    ),
+
+    _set_statement: $ => seq(
+      $.identifier,
+      '=',
+      choice($._value, $.subquery),
     ),
 
     join_clause: $ => seq(
@@ -118,26 +121,25 @@ module.exports = grammar({
       alias($._conditions_body, $.clause_body),
     ),
 
-    _conditions_body: $ => alias($._conditions, $.clause_statement),
-
-    _conditions: $ => choice(
-      $.subcondition,
+    _conditions_body: $ => choice(
+      alias($._subcondition, $.clause_body),
       seq(
-        $.condition,
+        alias($._condition, $.clause_statement),
         repeat(
-          choice(
-            seq(keyword('AND'), $.condition),
-            seq(keyword('AND'), $.subcondition),
-            seq(keyword('OR'), $.condition),
-            seq(keyword('OR'), $.subcondition),
-          ),
+          seq(
+            choice(keyword('AND'), keyword('OR')),
+            choice(
+              alias($._condition, $.clause_statement),
+              alias($._subcondition, $.clause_body),
+            ),
+          )
         ),
       ),
     ),
 
-    subcondition: $ => bracket_rule($._conditions),
+    _subcondition: $ => bracket_rule($._conditions_body),
 
-    condition: $ => seq(
+    _condition: $ => seq(
       $._value,
       choice(
         seq(
@@ -169,7 +171,7 @@ module.exports = grammar({
       alias($._group_by_body, $.clause_body),
     ),
 
-    _group_by_body: $ => alias(repeat_comma($.symbole_definition), $.clause_statement),
+    _group_by_body: $ => repeat_comma(alias($.identifier, $.clause_statement)),
 
     having_clause: $ => seq(
       keyword('HAVING'),
@@ -182,16 +184,15 @@ module.exports = grammar({
       alias($._order_by_body, $.clause_body),
     ),
 
-    _order_by_body: $ => alias(
-        repeat_comma(
-        seq(
-          $.symbole_definition,
-          optional(
-            choice(keyword('ASC'), keyword('DESC')),
-          ),
-        ),
+    _order_by_body: $ => repeat_comma(
+        alias($._order_by_statement, $.clause_statement),
+    ),
+
+    _order_by_statement: $ => seq(
+      $.symbole_definition,
+      optional(
+        choice(keyword('ASC'), keyword('DESC')),
       ),
-      $.clause_statement,
     ),
 
     limit_clause: $ => seq(
