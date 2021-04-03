@@ -26,6 +26,14 @@
           "members": [
             {
               "type": "SYMBOL",
+              "name": "create_statement"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "drop_statement"
+            },
+            {
+              "type": "SYMBOL",
               "name": "select_statement"
             },
             {
@@ -35,6 +43,10 @@
             {
               "type": "SYMBOL",
               "name": "insert_statement"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "delete_statement"
             }
           ]
         },
@@ -95,6 +107,147 @@
         {
           "type": "SYMBOL",
           "name": "symbole_definition"
+        }
+      ]
+    },
+    "create_statement": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "create_clause"
+        }
+      ]
+    },
+    "create_clause": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "CREATE"
+              },
+              {
+                "type": "STRING",
+                "value": "create"
+              }
+            ]
+          },
+          "named": false,
+          "value": "CREATE"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "DATABASE"
+              },
+              {
+                "type": "STRING",
+                "value": "database"
+              }
+            ]
+          },
+          "named": false,
+          "value": "DATABASE"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "identifier"
+          },
+          "named": true,
+          "value": "clause_body"
+        }
+      ]
+    },
+    "drop_statement": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "drop_clause"
+        }
+      ]
+    },
+    "drop_clause": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "DROP"
+              },
+              {
+                "type": "STRING",
+                "value": "drop"
+              }
+            ]
+          },
+          "named": false,
+          "value": "DROP"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "ALIAS",
+              "content": {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "STRING",
+                    "value": "DATABASE"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "database"
+                  }
+                ]
+              },
+              "named": false,
+              "value": "DATABASE"
+            },
+            {
+              "type": "ALIAS",
+              "content": {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "STRING",
+                    "value": "TABLE"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "table"
+                  }
+                ]
+              },
+              "named": false,
+              "value": "TABLE"
+            }
+          ]
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "identifier"
+          },
+          "named": true,
+          "value": "clause_body"
         }
       ]
     },
@@ -722,6 +875,61 @@
           "value": ")"
         }
       ]
+    },
+    "delete_statement": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "delete_clause"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "from_clause"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "where_clause"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "limit_clause"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "delete_clause": {
+      "type": "ALIAS",
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "DELETE"
+          },
+          {
+            "type": "STRING",
+            "value": "delete"
+          }
+        ]
+      },
+      "named": false,
+      "value": "DELETE"
     },
     "value_clause": {
       "type": "SEQ",
@@ -1657,21 +1865,12 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "_limit_body"
+            "name": "number"
           },
           "named": true,
           "value": "clause_body"
         }
       ]
-    },
-    "_limit_body": {
-      "type": "ALIAS",
-      "content": {
-        "type": "SYMBOL",
-        "name": "number"
-      },
-      "named": true,
-      "value": "clause_statement"
     },
     "symbole_definition": {
       "type": "SEQ",

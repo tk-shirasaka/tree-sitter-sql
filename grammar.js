@@ -10,9 +10,12 @@ module.exports = grammar({
 
     _definition: $ => seq(
       choice(
+        $.create_statement,
+        $.drop_statement,
         $.select_statement,
         $.update_statement,
         $.insert_statement,
+        $.delete_statement,
       ),
       optional(';'),
     ),
@@ -23,6 +26,26 @@ module.exports = grammar({
 
     clause_statement: $ => repeat_comma(
       $.symbole_definition,
+    ),
+
+    create_statement: $ => seq(
+      $.create_clause,
+    ),
+
+    create_clause: $ => seq(
+      keyword('CREATE'),
+      keyword('DATABASE'),
+      alias($.identifier, $.clause_body),
+    ),
+
+    drop_statement: $ => seq(
+      $.drop_clause,
+    ),
+
+    drop_clause: $ => seq(
+      keyword('DROP'),
+      choice(keyword('DATABASE'), keyword('TABLE')),
+      alias($.identifier, $.clause_body),
     ),
 
     select_statement: $ => seq(
@@ -117,6 +140,15 @@ module.exports = grammar({
     _insert_field_body: $ => bracket_rule(
       repeat_comma(alias($.identifier, $.clause_statement)),
     ),
+
+    delete_statement: $ => seq(
+      $.delete_clause,
+      $.from_clause,
+      optional($.where_clause),
+      optional($.limit_clause),
+    ),
+
+    delete_clause: () => keyword('DELETE'),
 
     value_clause: $ => seq(
       keyword('VALUES'),
@@ -227,10 +259,8 @@ module.exports = grammar({
 
     limit_clause: $ => seq(
       keyword('LIMIT'),
-      alias($._limit_body, $.clause_body),
+      alias($.number, $.clause_body),
     ),
-
-    _limit_body: $ => alias($.number, $.clause_statement),
 
     symbole_definition: $ => seq(
       choice(

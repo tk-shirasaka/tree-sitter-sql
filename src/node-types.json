@@ -29,7 +29,7 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": true,
+      "required": false,
       "types": [
         {
           "type": "clause_body",
@@ -41,6 +41,10 @@
         },
         {
           "type": "join_clause",
+          "named": true
+        },
+        {
+          "type": "name",
           "named": true
         }
       ]
@@ -111,6 +115,98 @@
         },
         {
           "type": "symbole_definition",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "create_clause",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "clause_body",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "create_statement",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "create_clause",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "delete_clause",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "delete_statement",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "delete_clause",
+          "named": true
+        },
+        {
+          "type": "from_clause",
+          "named": true
+        },
+        {
+          "type": "limit_clause",
+          "named": true
+        },
+        {
+          "type": "where_clause",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "drop_clause",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "clause_body",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "drop_statement",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "drop_clause",
           "named": true
         }
       ]
@@ -411,6 +507,18 @@
           "named": true
         },
         {
+          "type": "create_statement",
+          "named": true
+        },
+        {
+          "type": "delete_statement",
+          "named": true
+        },
+        {
+          "type": "drop_statement",
+          "named": true
+        },
+        {
           "type": "insert_statement",
           "named": true
         },
@@ -643,7 +751,23 @@
     "named": false
   },
   {
+    "type": "CREATE",
+    "named": false
+  },
+  {
+    "type": "DATABASE",
+    "named": false
+  },
+  {
+    "type": "DELETE",
+    "named": false
+  },
+  {
     "type": "DESC",
+    "named": false
+  },
+  {
+    "type": "DROP",
     "named": false
   },
   {
@@ -728,6 +852,10 @@
   },
   {
     "type": "SET",
+    "named": false
+  },
+  {
+    "type": "TABLE",
     "named": false
   },
   {
