@@ -12,6 +12,7 @@ module.exports = grammar({
       choice(
         $.select_statement,
         $.update_statement,
+        $.insert_statement,
       ),
       optional(';'),
     ),
@@ -97,6 +98,35 @@ module.exports = grammar({
       $.identifier,
       '=',
       choice($._value, $.subquery),
+    ),
+
+    insert_statement: $ => seq(
+      $.insert_clause,
+      choice($.value_clause, $.select_statement),
+    ),
+
+    insert_clause: $ => seq(
+      keyword('INSERT'),
+      keyword('INTO'),
+      alias($._insert_table_body, $.clause_body),
+      optional(alias($._insert_field_body, $.clause_body)),
+    ),
+
+    _insert_table_body: $ => alias($.identifier, $.clause_statement),
+
+    _insert_field_body: $ => bracket_rule(
+      repeat_comma(alias($.identifier, $.clause_statement)),
+    ),
+
+    value_clause: $ => seq(
+      keyword('VALUES'),
+      repeat_comma(alias($._value_body, $.clause_body)),
+    ),
+
+    _value_body: $ => bracket_rule(
+      repeat_comma(
+        alias($._value, $.clause_statement),
+      ),
     ),
 
     join_clause: $ => seq(

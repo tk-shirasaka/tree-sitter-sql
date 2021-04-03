@@ -232,6 +232,44 @@
     }
   },
   {
+    "type": "insert_clause",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "clause_body",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "insert_statement",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "insert_clause",
+          "named": true
+        },
+        {
+          "type": "select_statement",
+          "named": true
+        },
+        {
+          "type": "value_clause",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "join_clause",
     "named": true,
     "fields": {},
@@ -373,6 +411,10 @@
           "named": true
         },
         {
+          "type": "insert_statement",
+          "named": true
+        },
+        {
           "type": "select_statement",
           "named": true
         },
@@ -469,6 +511,21 @@
         },
         {
           "type": "where_clause",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "value_clause",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "clause_body",
           "named": true
         }
       ]
@@ -614,6 +671,14 @@
     "named": false
   },
   {
+    "type": "INSERT",
+    "named": false
+  },
+  {
+    "type": "INTO",
+    "named": false
+  },
+  {
     "type": "IS",
     "named": false
   },
@@ -675,6 +740,10 @@
   },
   {
     "type": "UPDATE",
+    "named": false
+  },
+  {
+    "type": "VALUES",
     "named": false
   },
   {
