@@ -79,8 +79,8 @@ module.exports = grammar({
 
     _select_fields_statement: $ => choice(
       '*',
-      seq(repeat_str($.name, '.'), '.', '*'),
-      $.symbole_definition
+      seq(repeat_keyword($.name, '.'), '.', '*'),
+      $._value_with_symbole,
     ),
 
     from_clause: $ => seq(
@@ -183,48 +183,26 @@ module.exports = grammar({
       alias($._conditions_body, $.clause_body),
     ),
 
-    _conditions_body: $ => choice(
-      alias($._subcondition, $.clause_body),
-      seq(
-        alias($._condition, $.clause_statement),
-        repeat(
-          seq(
-            choice(keyword('AND'), keyword('OR')),
-            choice(
-              alias($._condition, $.clause_statement),
-              alias($._subcondition, $.clause_body),
-            ),
-          )
-        ),
-      ),
+    _conditions_body: $ => repeat_keyword(
+          choice(
+            alias($._condition, $.clause_statement),
+            alias($._subcondition, $.clause_body),
+          ),
+          choice(keyword('AND'), keyword('OR')),
     ),
 
-    _subcondition: $ => bracket_rule($._conditions_body),
+    _subcondition: $ => seq(
+      optional(keyword('NOT')),
+      bracket_rule($._conditions_body),
+    ),
 
-    _condition: $ => seq(
-      $._value,
-      choice(
-        seq(
-          choice('=', '<>', '<', '<=', '>', '>='),
-          $._value,
-        ),
-        seq(
-          optional(keyword('NOT')),
-          keyword('IN'),
-          bracket_rule(repeat_comma($._value))
-        ),
-        seq(
-          keyword('IS'),
-          optional(keyword('NOT')),
-          $.null,
-        ),
-        seq(
-          keyword('BETWEEN'),
-          $._value,
-          keyword('AND'),
-          $._value,
-        ),
-      ),
+    _condition: $ => choice(
+      seq(optional(keyword('NOT')), keyword('EXISTS'), $.subquery),
+      seq($._value, choice('=', '<>', '<', '<=', '>', '>='), $._value),
+      seq($._value, optional(keyword('NOT')), keyword('IN'), bracket_rule(repeat_comma($._value))),
+      seq($._value, optional(keyword('NOT')), keyword('IN'), $.subquery),
+      seq($._value, keyword('IS'), optional(keyword('NOT')), $.null),
+      seq($._value, keyword('BETWEEN'), $._value, keyword('AND'), $._value),
     ),
 
     group_by_clause: $ => seq(
@@ -270,7 +248,7 @@ module.exports = grammar({
       optional(
         seq(
           keyword('AS'),
-          field('alias', alias($._name, $.identifier)),
+          field('alias', alias($.name, $.identifier)),
         ),
       ),
     ),
@@ -278,6 +256,16 @@ module.exports = grammar({
     _value: $ => choice(
       $.function_call_expression,
       $.identifier,
+      $.binary_expression,
+      $.number,
+      $.float,
+      $.string,
+      $.boolean,
+    ),
+
+    _value_with_symbole: $ => choice(
+      $.function_call_expression,
+      $.symbole_definition,
       $.binary_expression,
       $.number,
       $.float,
@@ -309,7 +297,7 @@ module.exports = grammar({
         '/',
       )
     )),
-    identifier: $ => repeat_str($.name, '.'),
+    identifier: $ => repeat_keyword($.name, '.'),
     name: $ => choice(
       $._name,
       seq('`', $._name, '`'),
@@ -334,13 +322,13 @@ function keyword(word) {
 }
 
 function repeat_comma(rule) {
-  return repeat_str(rule, ',');
+  return repeat_keyword(rule, ',');
 }
 
-function repeat_str(rule, str) {
+function repeat_keyword(rule, keyword) {
   return seq(
     repeat(
-      seq(rule, str),
+      seq(rule, keyword),
     ),
     rule,
   );
